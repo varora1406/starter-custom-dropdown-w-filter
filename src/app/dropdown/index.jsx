@@ -1,16 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "./styles.css";
 
-function Dropdown({ options }) {
+function Dropdown({ options, placeholder, value, onChange }) {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="dropdown">
-      <div className="control">
-        <div className="selected-value">Select...</div>
-        <div className="arrow"></div>
+      <div
+        className="control"
+        onClick={() => setOpen((previousValue) => !previousValue)}
+      >
+        <div className="selected-value">{value ? value.name : placeholder}</div>
+        <div className={`arrow ${open ? "open" : null}`}></div>
       </div>
-      <div className="options">
+      <div className={`options ${open ? "open" : null}`}>
         {options.map((option) => (
-          <div className="option">{option.name}</div>
+          <div
+            className={`option ${value === option ? "selected" : null}`}
+            onClick={() => {
+              onChange(option);
+              setOpen(false);
+            }}
+          >
+            {option.name}
+          </div>
         ))}
       </div>
     </div>
