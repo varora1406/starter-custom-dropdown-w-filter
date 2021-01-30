@@ -7,13 +7,14 @@ function Dropdown({ options, id, label, placeholder, value, onChange }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    document.addEventListener("click", close);
+    const events = ["click", "touchend"];
+    events.forEach((e) => document.addEventListener("click", toggle));
     return () => {
-      document.removeEventListener("click", close);
+      events.forEach((e) => document.removeEventListener("click", toggle));
     };
   }, []);
 
-  function close(e) {
+  function toggle(e) {
     setOpen(e && e.target === ref.current);
   }
 
@@ -39,12 +40,15 @@ function Dropdown({ options, id, label, placeholder, value, onChange }) {
     return query.length > 0 && filter(options).length === 0;
   }
 
+  function selectOption(option) {
+    setQuery("");
+    onChange(option);
+    setOpen(false);
+  }
+
   return (
     <div className="dropdown">
-      <div
-        className="control"
-        onClick={() => setOpen((previousValue) => !previousValue)}
-      >
+      <div className="control">
         <div className="selected-value">
           <input
             type="text"
@@ -55,7 +59,8 @@ function Dropdown({ options, id, label, placeholder, value, onChange }) {
               setQuery(e.target.value);
               onChange(null);
             }}
-            onClick={() => setOpen((prev) => !prev)}
+            onClick={toggle}
+            onTouchEnd={toggle}
           />
         </div>
         <div className={`arrow ${open ? "open" : null}`}></div>
@@ -65,11 +70,8 @@ function Dropdown({ options, id, label, placeholder, value, onChange }) {
           <div
             key={option[id]}
             className={`option ${value === option ? "selected" : null}`}
-            onClick={() => {
-              setQuery("");
-              onChange(option);
-              setOpen(false);
-            }}
+            onClick={() => selectOption(option)}
+            onTouchEnd={() => selectOption(option)}
           >
             {option[label]}
           </div>
