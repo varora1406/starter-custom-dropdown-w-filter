@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./styles.css";
 
 function Dropdown({ options, placeholder, value, onChange }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("click", close);
+    return () => {
+      document.removeEventListener("click", close);
+    };
+  }, []);
+
+  function close(e) {
+    setOpen(e && e.target === ref.current);
+  }
 
   return (
     <div className="dropdown">
@@ -10,7 +22,9 @@ function Dropdown({ options, placeholder, value, onChange }) {
         className="control"
         onClick={() => setOpen((previousValue) => !previousValue)}
       >
-        <div className="selected-value">{value ? value.name : placeholder}</div>
+        <div className="selected-value" ref={ref}>
+          {value ? value.name : placeholder}
+        </div>
         <div className={`arrow ${open ? "open" : null}`}></div>
       </div>
       <div className={`options ${open ? "open" : null}`}>
