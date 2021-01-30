@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./styles.css";
 
-function Dropdown({ options, placeholder, value, onChange }) {
+function Dropdown({ options, id, label, placeholder, value, onChange }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -23,20 +23,21 @@ function Dropdown({ options, placeholder, value, onChange }) {
         onClick={() => setOpen((previousValue) => !previousValue)}
       >
         <div className="selected-value" ref={ref}>
-          {value ? value.name : placeholder}
+          {value ? value[label] : placeholder}
         </div>
         <div className={`arrow ${open ? "open" : null}`}></div>
       </div>
       <div className={`options ${open ? "open" : null}`}>
         {options.map((option) => (
           <div
+            key={option[id]}
             className={`option ${value === option ? "selected" : null}`}
             onClick={() => {
               onChange(option);
               setOpen(false);
             }}
           >
-            {option.name}
+            {option[label]}
           </div>
         ))}
       </div>
